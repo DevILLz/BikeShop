@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PlatformService.Models;
+﻿using CommandService.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace PlatformService.Data;
+namespace CommandService.Data;
 
-public static class PlatformSeed 
+public static class CommandSeed
 {
     public static async Task SeedData(AppDbContext context, bool isProdaction)
     {
@@ -12,20 +12,20 @@ public static class PlatformSeed
             Console.WriteLine("--> Attempting to apply migrations...");
             try
             {
-                context.Database.Migrate();
+                //context.Database.Migrate();
                 Console.WriteLine("--> Migrations applied");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"--> Could not run migrations: {ex.Message}");
-            }            
+            }
         }
 
         if (context.Platforms.FirstOrDefault() is not null) return;
 
         await context.Platforms.AddRangeAsync(
-            new Platform { Name = "First", Cost = 111, Publisher = "Dev" },
-            new Platform { Name = "Second", Cost = 222, Publisher = "Dev" }
+            new Platform { Name = "First1" },
+            new Platform { Name = "Second2" }
             );
         await context.SaveChangesAsync();
     }

@@ -1,16 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace PlatformService.DTOs;
 
-namespace PlatformService.DTOs
+public class PlatformCreateDto
 {
-    public class PlatformCreateDto
-    {
-        [Required]
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        [Required]
-        public string Publisher { get; set; }
+    public string Publisher { get; set; }
 
-        [Required]
-        public int Cost { get; set; }
-    }
+    public int Cost { get; set; }
 }

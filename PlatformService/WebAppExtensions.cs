@@ -9,7 +9,7 @@ public static class WebAppExtensions
     /// </summary>
     public static async Task RunPlatform(this WebApplication app)
     {
-        await app.SetUpDb();
+        await app.SetUpDb(app.Environment.IsProduction());
         app.UseMiddleware<ExceptionMiddleware>()
            .UseRouting()
            .UseEndpoints(endpoints =>
@@ -23,13 +23,13 @@ public static class WebAppExtensions
     /// <summary>
     /// Adds all scopes which required for PlatformService work
     /// </summary>
-    public static async Task<IApplicationBuilder> SetUpDb(this IApplicationBuilder app)
+    public static async Task<IApplicationBuilder> SetUpDb(this IApplicationBuilder app, bool isProdaction)
     {
         using (var services = app.ApplicationServices.CreateScope())
         {
             var dbContext = services.ServiceProvider.GetService<AppDbContext>();
             //await dbContext.Database.MigrateAsync();
-            await PlatformSeed.SeedData(dbContext);
+            await PlatformSeed.SeedData(dbContext, isProdaction);
         }        
 
         return app;

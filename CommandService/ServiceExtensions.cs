@@ -1,3 +1,4 @@
+using CommandService.Data;
 using Microsoft.EntityFrameworkCore;
 
 public static class ServiceExtensions
@@ -8,7 +9,7 @@ public static class ServiceExtensions
     public static IServiceCollection AddPlatformServices(this IServiceCollection services)
     {
         services
-                //.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMem"))
+                .AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMem"))
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScopes()
                 .AddControllers();
@@ -21,7 +22,7 @@ public static class ServiceExtensions
     /// </summary>
     public static IServiceCollection AddScopes(this IServiceCollection services)
     {
-        //services.AddScoped<IPlatformRepository, PlatformRepository>();
+        services.AddScoped<ICommandsRepository, CommandsRepository>();
 
         return services;
     }
