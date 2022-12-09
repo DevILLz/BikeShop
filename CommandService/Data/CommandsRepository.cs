@@ -76,4 +76,9 @@ public class CommandsRepository : ICommandsRepository
             .Where(c => c.PlatformId == platformId && c.Id == commandId)
             .FirstOrDefault();
     }
+
+    public bool ExternalPlatformExist(int externalPlatformId)
+    {
+        return context.Platforms.Any(p => p.ExternalID == externalPlatformId);
+    }
 }

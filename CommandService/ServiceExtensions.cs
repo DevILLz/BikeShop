@@ -1,4 +1,6 @@
+using CommandService.AsyncDataServices;
 using CommandService.Data;
+using CommandService.EventProcessing;
 using Microsoft.EntityFrameworkCore;
 
 public static class ServiceExtensions
@@ -23,6 +25,9 @@ public static class ServiceExtensions
     public static IServiceCollection AddScopes(this IServiceCollection services)
     {
         services.AddScoped<ICommandsRepository, CommandsRepository>();
+        services.AddSingleton<IEventProcessor, EventProcessor>();
+
+        services.AddHostedService<MessageBussSubscriber>();
 
         return services;
     }

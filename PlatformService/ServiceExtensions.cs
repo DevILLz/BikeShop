@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
+using PlatformService.AsyncDataServices;
 using PlatformService.SyncDataServices.Http;
 
 public static class ServiceExtensions
@@ -35,6 +36,7 @@ public static class ServiceExtensions
     public static IServiceCollection AddScopes(this IServiceCollection services)
     {
         services.AddScoped<IPlatformRepository, PlatformRepository>();
+        services.AddScoped<IMessageBussClient, MessageBussClient>();
 
         return services;
     }

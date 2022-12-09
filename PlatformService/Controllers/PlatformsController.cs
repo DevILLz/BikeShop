@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using PlatformService.AsyncDataServices;
 using PlatformService.Data;
 using PlatformService.DTOs;
 using PlatformService.Models;
 using PlatformService.SyncDataServices.Http;
+using System;
 
 namespace PlatformService.Controllers
 {
@@ -12,14 +14,19 @@ namespace PlatformService.Controllers
     public class PlatformsController : ControllerBase 
     {
         private readonly ICommandDataClient commandDataClient;
+        private readonly IMessageBussClient messageBussClient;
         private readonly IPlatformRepository repos;
         private readonly IMapper mapper;
 
-        public PlatformsController(IPlatformRepository repos, IMapper mapper, ICommandDataClient commandDataClient)
+        public PlatformsController(IPlatformRepository repos, 
+                                   IMapper mapper, 
+                                   ICommandDataClient commandDataClient,
+                                   IMessageBussClient messageBussClient)
         {
             this.repos = repos;
             this.mapper = mapper;
             this.commandDataClient = commandDataClient;
+            this.messageBussClient = messageBussClient;
         }
 
         [HttpGet]
@@ -47,6 +54,7 @@ namespace PlatformService.Controllers
             repos.SaveChanges();
 
             var platformReadDto = mapper.Map<PlatformReadDto>(createdPlatform);
+
             try 
             {
                 await commandDataClient.SendPlatformToCommand(platformReadDto);
@@ -54,6 +62,18 @@ namespace PlatformService.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"--> Coult not send sync msg: {ex.Message}");
+            }
+
+            try
+            {
+                var platformPublishDto = mapper.Map<PlatformPublishDto>(platformReadDto);
+                platformPublishDto.Event = "Platform_Published";
+                messageBussClient.PublishNewPlatform(platformPublishDto);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"--> Coult not send async msg: {ex.Message}");
             }
 
             return Ok(createdPlatform.Id);
