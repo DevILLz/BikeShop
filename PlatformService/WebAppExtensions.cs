@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using PlatformService;
 using PlatformService.Data;
+using PlatformService.SyncDataServices.Grpc;
 
 public static class WebAppExtensions
 {
@@ -15,6 +15,12 @@ public static class WebAppExtensions
            .UseEndpoints(endpoints =>
            {
                endpoints.MapControllers();
+               endpoints.MapGrpcService<GrpcPlatformService>();
+
+               endpoints.MapGet("/protos/platforms.proto", async context =>
+               {
+                   await context.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+               });
            });
 
         app.Run();

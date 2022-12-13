@@ -1,6 +1,7 @@
 using CommandService.AsyncDataServices;
 using CommandService.Data;
 using CommandService.EventProcessing;
+using CommandService.SyncDataServices.Grpc;
 using Microsoft.EntityFrameworkCore;
 
 public static class ServiceExtensions
@@ -26,6 +27,7 @@ public static class ServiceExtensions
     {
         services.AddScoped<ICommandsRepository, CommandsRepository>();
         services.AddSingleton<IEventProcessor, EventProcessor>();
+        services.AddSingleton<IPlatformDataClient, PlatformDataClient>();
 
         services.AddHostedService<MessageBussSubscriber>();
 

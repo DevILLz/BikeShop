@@ -1,4 +1,6 @@
 using CommandService;
+using CommandService.Data;
+using CommandService.SyncDataServices.Grpc;
 using Microsoft.EntityFrameworkCore;
 
 public static class WebAppExtensions
@@ -26,9 +28,10 @@ public static class WebAppExtensions
     {
         using (var services = app.ApplicationServices.CreateScope())
         {
-            //var dbContext = services.ServiceProvider.GetService<AppDbContext>();
-            //await dbContext.Database.MigrateAsync();
-            //await PlatformSeed.SeedData(dbContext);
+            var grpcClient = services.ServiceProvider.GetService<IPlatformDataClient>();
+
+            var platforms = grpcClient.ReturnAllPlatforms();
+            await CommandSeed.SeedData(services.ServiceProvider.GetService<ICommandsRepository>(), platforms);
         }        
 
         return app;

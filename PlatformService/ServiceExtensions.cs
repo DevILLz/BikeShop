@@ -22,9 +22,10 @@ public static class ServiceExtensions
         }
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-                .AddScopes()
+                .AddScopes()                
                 .AddControllers();
 
+        services.AddGrpc();
         services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
         return services;

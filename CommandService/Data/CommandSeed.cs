@@ -1,32 +1,22 @@
 ﻿using CommandService.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace CommandService.Data;
 
 public static class CommandSeed
 {
-    public static async Task SeedData(AppDbContext context, bool isProdaction)
+    public static Task SeedData(ICommandsRepository repos, IEnumerable<Platform> platforms)
     {
-        if (isProdaction)
+        Console.WriteLine($"Seeding platforms...");
+
+        foreach (var platform in platforms)
         {
-            Console.WriteLine("--> Attempting to apply migrations...");
-            try
+            if (repos.ExternalPlatformExist(platform.ExternalID) is false)
             {
-                //context.Database.Migrate();
-                Console.WriteLine("--> Migrations applied");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"--> Could not run migrations: {ex.Message}");
+                repos.CreatePlatform(platform);
             }
         }
+        repos.SaveChanges();
 
-        if (context.Platforms.FirstOrDefault() is not null) return;
-
-        await context.Platforms.AddRangeAsync(
-            new Platform { Name = "First1" },
-            new Platform { Name = "Second2" }
-            );
-        await context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 }
